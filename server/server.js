@@ -1,0 +1,46 @@
+import express from 'express';
+import path from 'path';
+import webpack from 'webpack';
+import webpackDevMiddleware from 'webpack-dev-middleware';
+import webpackHotMiddleware from 'webpack-hot-middleware';
+
+import {getTrees} from "./vpk/vpk-loader";
+
+import config from '../gameconfig';
+import webpackConfig from '../webpack.server.config';
+
+const app = express();
+app.set('view engine', 'ejs');
+
+const compiler = webpack(webpackConfig);
+app.use(webpackDevMiddleware(compiler, {
+    publicPath: webpackConfig.output.publicPath
+}));
+app.use(webpackHotMiddleware(compiler));
+app.use(express.static(__dirname));
+
+app.get('/vpktree', (req, res) => {
+    res.set('content-type', 'text/html');
+    res.render(
+        path.join(__dirname, 'index'),
+        {
+            title: 'Disciples II',
+            data: JSON.stringify(getTrees(), null, 2)
+        }
+    );
+});
+
+app.get('*', (req, res) => {
+    res.set('content-type', 'text/html');
+    res.render(
+        path.join(__dirname, 'index'),
+        {
+            title: 'Disciples II',
+            data: 'her'
+        }
+    );
+});
+
+app.listen(config.server_port, () => {
+    console.log(`App is listening on port ${config.server_port}`);
+});
