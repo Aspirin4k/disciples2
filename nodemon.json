@@ -1,4 +1,4 @@
 {
   "verbose": true,
-  "ignore": ["src", "node_modules", "server"]
+  "ignore": ["src", "node_modules", "server", "**/_resources/**/*"]
 }

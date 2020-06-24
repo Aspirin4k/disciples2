@@ -33,6 +33,8 @@ module.exports = {
         ]
     },
     plugins: [
-        new CleanWebpackPlugin()
+        new CleanWebpackPlugin({
+            cleanOnceBeforeBuildPatterns: ['**/*', '!_resources', '!_resources/**/*']
+        })
     ]
 };

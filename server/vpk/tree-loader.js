@@ -1,6 +1,7 @@
 import fs from 'fs';
-import {INT_SIZE, SHORT_SIZE, VPK_SIGNATURE, VPK_VERSION} from "./consts";
+import {CHAR_SIZE, INT_SIZE, SHORT_SIZE, VPK_SIGNATURE, VPK_TREE_FILE_TERMINATOR, VPK_VERSION} from "./consts";
 import {loadString} from "./helpers";
+import {logger} from "../logger";
 
 
 const getTree = (filename) => {
@@ -45,10 +46,13 @@ const getTree = (filename) => {
         const loadedExtension = getExtension(binaryBuffer, current);
         current = loadedExtension.indexFinish;
         tree[extension] = loadedExtension.result;
-        current += SHORT_SIZE;
-    }
 
-    console.log(current);
+        // После звена идет NULL
+        if (0 !== binaryBuffer[current]) {
+            logger.error('Expected NULL, got ' + binaryBuffer[current]);
+        }
+        current += CHAR_SIZE;
+    }
 
     return tree;
 };
@@ -66,6 +70,12 @@ const getExtension = (binaryBuffer, indexStart) => {
         const loadedPath = getFilepath(binaryBuffer, current);
         current = loadedPath.indexFinish;
         extension[filepath] = loadedPath.result;
+
+        // После звена идет NULL
+        if (0 !== binaryBuffer[current]) {
+            logger.error('Expected NULL, got ' + binaryBuffer[current]);
+        }
+        current += CHAR_SIZE;
     }
 
     return {
@@ -83,6 +93,7 @@ const getFilepath = (binaryBuffer, indexStart) => {
         const loadedString = loadString(binaryBuffer, current);
         const filename = loadedString.result;
         current = loadedString.indexFinish;
+        logger.debug('Loading ' + filename + ' header info');
 
         const loadedFile = getFile(binaryBuffer, current);
         current = loadedFile.indexFinish;
@@ -99,11 +110,15 @@ const getFile = (binaryBuffer, indexStart) => {
     let current = indexStart;
 
     // https://en.wikipedia.org/wiki/Cyclic_redundancy_check
+    // TODO: проверять бы
     const CRC = parseInt(binaryBuffer.slice(current, current + INT_SIZE).swap32().toString('hex'), 16);
     current += INT_SIZE;
     // Количество байт целевого файла, которые содержатся в этом файле
     const preloadBytes = parseInt(binaryBuffer.slice(current, current + SHORT_SIZE).swap16().toString('hex'), 16);
     current += SHORT_SIZE;
+    if (0 !== preloadBytes) {
+        logger.error('Unexpected preload bytes! Expected 0.');
+    }
     // Индекс файла, в котором находится данный файл
     const archiveIndex = parseInt(binaryBuffer.slice(current, current + SHORT_SIZE).swap16().toString('hex'), 16);
     current += SHORT_SIZE;
@@ -116,9 +131,16 @@ const getFile = (binaryBuffer, indexStart) => {
     // Терминатор. Должен быть 0xffff
     const terminator = parseInt(binaryBuffer.slice(current, current + SHORT_SIZE).swap16().toString('hex'), 16);
     current += SHORT_SIZE;
+    if (VPK_TREE_FILE_TERMINATOR !== terminator) {
+        logger.error('No terminator found!');
+    }
 
     return {
-        result: {},
+        result: {
+            archiveIndex,
+            archiveOffset,
+            fileLength
+        },
         indexFinish: current
     }
 };

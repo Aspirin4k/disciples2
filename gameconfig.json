@@ -1,4 +1,5 @@
 {
   "game_directory": "e:\\Steam\\steamapps\\common\\Disciples II Rise of the Elves\\",
-  "server_port": "8080"
+  "server_port": "8080",
+  "server_resources": "_resources"
 }

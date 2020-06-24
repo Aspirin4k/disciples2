@@ -4,7 +4,7 @@ import webpack from 'webpack';
 import webpackDevMiddleware from 'webpack-dev-middleware';
 import webpackHotMiddleware from 'webpack-hot-middleware';
 
-import {getTrees} from "./vpk/vpk-loader";
+import {getTrees, unpackVpks} from "./vpk/vpk-loader";
 
 import config from '../gameconfig';
 import webpackConfig from '../webpack.server.config';
@@ -20,14 +20,14 @@ app.use(webpackHotMiddleware(compiler));
 app.use(express.static(__dirname));
 
 app.get('/vpktree', (req, res) => {
-    res.set('content-type', 'text/html');
-    res.render(
-        path.join(__dirname, 'index'),
-        {
-            title: 'Disciples II',
-            data: JSON.stringify(getTrees(), null, 2)
-        }
-    );
+    res.set('content-type', 'application/json');
+    res.json(getTrees());
+});
+
+app.get('/vpk', (req, res) => {
+    res.set('content-type', 'application/json');
+    unpackVpks();
+    res.json('ok');
 });
 
 app.get('*', (req, res) => {
