@@ -16,8 +16,14 @@ module.exports = {
     },
     externals: [
         nodeExternals(), 
-        {
-            "./vendor/ffmpeg-mp4.js": "commonjs2 ./vendor/ffmpeg-mp4.js"
+        function (context, request, callback) {
+            if (/\/vendor\/.+$/.test(request)){
+                // Externalize to a commonjs module using the request path
+                return callback(null, 'commonjs ' + request);
+              }
+        
+              // Continue without externalizing the import
+              callback();
         }
     ],
     output: {
@@ -26,8 +32,22 @@ module.exports = {
         path: path.resolve(__dirname, 'dist')
     },
     devtool: 'inline-source-map',
+    watchOptions: {
+        ignored: ['dist/**']
+    },
     module: {
         rules: [
+            {
+                // Скрипты для воркеров копируются всырую
+                test: /\.worker\.js$/,
+                exclude: /node_modules|vendor/,
+                use: {
+                    loader: "file-loader",
+                    options: {
+                        name: '[name].[ext]'
+                    }
+                }
+            },
             {
                 // Transpiles ES6-8 into ES5
                 test: /\.js$/,
@@ -41,7 +61,13 @@ module.exports = {
     plugins: [
         new CleanWebpackPlugin({
             verbose: true,
-            cleanOnceBeforeBuildPatterns: ['**/*', '!_resources', '!_resources/**/*']
+            cleanOnceBeforeBuildPatterns: [
+                '**/*', 
+                '!_resources', 
+                '!_resources/**/*',
+                '!vendor',  // Этим занимается CopyPlugin
+                '!vendor/*'
+            ]
         }),
         new CopyPlugin({
             patterns: [

@@ -1,39 +1,33 @@
-// сбилдил https://github.com/Kagami/ffmpeg.js/
-// demuxer - bink
-// decoders - bink binkaudio_dct binkaudio_rdft
-import ffmpeg from './vendor/ffmpeg-mp4.js'
+import { Worker, isMainThread, parentPort } from 'worker_threads';
 import glob from 'glob';
 import path from 'path';
-import fs from 'fs';
 
+import './converter.worker';
 import config from '../../gameconfig';
-import { logger } from "../logger";
+import { WorkerPool } from '../worker/worker-pool';
 
-const TARGET_FORMAT = '.mp4';
+const WORKER_LIMIT = config.decoder.threads;
+let WORKER_POOL = null;
 
-// TODO: ускорить. треды?
-const convertVideos = () => {
-    const files = glob.sync(path.join(__dirname, config.server_resources, '**/*.bik'));
-    files.forEach(convertBikToMP4);
+const initializeWorkerPool = () => {
+    WORKER_POOL = new WorkerPool(
+        // TODO: Подумать, как сделать более безопасно к изменениям
+        path.join(__dirname, 'converter.worker.js'), 
+        WORKER_LIMIT
+    );
 }
 
-const convertBikToMP4 = (absoluteFileName) => {
-    const inputData = fs.readFileSync(absoluteFileName);
-    const fileName = path.basename(absoluteFileName);
-    const filePath = path.dirname(absoluteFileName);
-    const fileNameWithoutExtenstion = path.basename(absoluteFileName, path.extname(absoluteFileName));
-    
-    const targetFileName = fileNameWithoutExtenstion + TARGET_FORMAT
-    
-    const result = ffmpeg({
-        MEMFS: [{name: fileName, data: inputData}],
-        arguments: ['-i', fileName, targetFileName],
-        print: (data) => { logger.debug(data); },
-        printErr: (data) => { logger.error(data); }
-    });
+const convertVideos = () => {
+    if (isMainThread) {
+        if (!WORKER_POOL) {
+            initializeWorkerPool();
+        }
 
-    const out = result.MEMFS[0];
-    fs.writeFileSync(path.join(filePath, out.name), Buffer.from(out.data));
-};
+        const files = glob.sync(path.join(__dirname, config.server_resources, '**/*.bik'));
+        files.forEach((fileName) => {
+           WORKER_POOL.sheduleTask(fileName);
+        });
+    }
+}
 
 export { convertVideos };

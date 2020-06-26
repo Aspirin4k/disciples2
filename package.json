@@ -2,6 +2,9 @@
   "name": "disciples2",
   "version": "1.0.0",
   "description": "",
+  "repository": {
+    "url": "https://github.com/Aspirin4k/disciples2"
+  },
   "main": "src/index.js",
   "dependencies": {
     "ejs": "3.1.3",
@@ -33,8 +36,8 @@
   },
   "scripts": {
     "build-dev": "webpack --config webpack.server.config.js && webpack --config webpack.dev.config.js",
-    "watch:server": "webpack --watch --config webpack.server.config.js",
-    "watch:web": "webpack --watch --config webpack.dev.config.js",
+    "watch:server": "webpack --watch --info-verbosity verbose --config webpack.server.config.js",
+    "watch:web": "webpack --watch --info-verbosity verbose --config webpack.dev.config.js",
     "nodemon": "nodemon ./dist/server.js",
     "start-dev": "npm run build-dev && npm-run-all -p nodemon watch:server watch:web"
   },

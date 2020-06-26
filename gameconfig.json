@@ -1,5 +1,12 @@
 {
   "game_directory": "e:\\Steam\\steamapps\\common\\Disciples II Rise of the Elves\\",
   "server_port": "8080",
-  "server_resources": "_resources"
+  "server_resources": "_resources",
+  "decoder": {
+    "threads": 4
+  },
+  "worker": {
+    "maxOldGenerationSizeMb": 128,
+    "maxYoungGenerationSizeMb": 256
+  }
 }

@@ -31,6 +31,9 @@ module.exports = {
     optimization: {
         noEmitOnErrors: true
     },
+    watchOptions: {
+        ignored: ['dist/**']
+    },
     module: {
         rules: [
             {
