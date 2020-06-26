@@ -36,7 +36,7 @@ module.exports = {
             {
                 // Transpiles ES6-8 into ES5
                 test: /\.js$/,
-                exclude: /node_modules/,
+                exclude: /node_modules|vendor/,
                 use: {
                     loader: "babel-loader"
                 }

@@ -7,6 +7,6 @@ if(typeof(module.hot) !== 'undefined') {
 }
 
 const canvas = document.getElementById('game-scene');
-const main = createMainLoop(canvas);
+const main = createMainLoop(document, canvas);
 
 main();

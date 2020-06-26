@@ -8,6 +8,7 @@ import {getTrees, unpackVpks} from "./vpk/vpk-loader";
 
 import config from '../gameconfig';
 import webpackConfig from '../webpack.server.config';
+import {convertVideos} from "./video/converter";
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -17,7 +18,8 @@ app.use(webpackDevMiddleware(compiler, {
     publicPath: webpackConfig.output.publicPath
 }));
 app.use(webpackHotMiddleware(compiler));
-app.use(express.static(__dirname));
+app.use('/resources', express.static(path.join(__dirname, config.server_resources)));
+app.use('', express.static(__dirname));
 
 app.get('/vpktree', (req, res) => {
     res.set('content-type', 'application/json');
@@ -27,6 +29,12 @@ app.get('/vpktree', (req, res) => {
 app.get('/vpk', (req, res) => {
     res.set('content-type', 'application/json');
     unpackVpks();
+    res.json('ok');
+});
+
+app.get('/video', (req, res) => {
+    res.set('content-type', 'application/json');
+    convertVideos();
     res.json('ok');
 });
 
