@@ -1,7 +1,7 @@
 import path from 'path';
 import glob from 'glob';
 
-const { unpack } = require("./unpacker")
+const { unpack } = require("./ff-unpacker")
 import config from '../../gameconfig.json';
 
 const unpackFFs = () => {

@@ -4,6 +4,7 @@ import path from 'path';
 import { FF_SIGNATURE, FF_MQRC_SIGNATURE, INT_SIZE } from '../consts';
 import { BinaryWrapper } from '../binary/BinaryWrapper';
 import { logger } from '../logger';
+import { unpackAnimation } from './anim-unpacker';
 
 // Благодарность Андрею Фролову
 // https://www.extractor.ru/files/6762baed64c88af84c7d9c2fab817808/
@@ -11,6 +12,8 @@ const unpack = (fileName) => {
     // Распакуем в папку с названием файла
     const fileNameFolder = path.join(path.dirname(fileName), path.basename(fileName, path.extname(fileName)));
     fs.mkdirSync(fileNameFolder, { recursive: true });
+
+    logger.debug('Unpacking ' + fileNameFolder);
 
     const binaryWrapper = new BinaryWrapper(fs.readFileSync(fileName));
     
@@ -39,10 +42,12 @@ const unpack = (fileName) => {
             return mqrc.ID === fileMqrcId;
         })
         fs.writeFileSync(
-            path.join(fileNameFolder, fileName), 
+            path.join(fileNameFolder, getFileName(mqrc, fileName)), 
             binaryWrapper.getBuffer().slice(mqrc.Offset, mqrc.Offset + mqrc.Size)
         );
     }
+
+    unpackAnimation(fileNameFolder);
 }
 
 const getMQRC = (binaryWrapper) => {
@@ -72,6 +77,14 @@ const getMQRC = (binaryWrapper) => {
     }
 
     return result;
+}
+
+const getFileName = (mqrc, fileName) => {
+    // Сохраняется с идентификатором блока MQRC для того, чтобы было проще
+    // связать с кадрами анимации, т.к. они ссылаются на идентификатор.
+    return path.extname(fileName) === '.PNG'
+        ? `${mqrc.ID}.PNG`
+        : fileName
 }
 
 export { unpack };

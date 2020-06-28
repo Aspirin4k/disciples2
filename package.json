@@ -11,6 +11,7 @@
     "express": "4.17.1",
     "glob": "7.1.6",
     "mkdirp": "1.0.4",
+    "pngjs": "5.0.0",
     "simple-node-logger": "18.12.24"
   },
   "devDependencies": {

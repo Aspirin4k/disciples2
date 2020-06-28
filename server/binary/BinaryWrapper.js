@@ -32,6 +32,10 @@ export class BinaryWrapper {
         return this.binaryBuffer;
     }
 
+    isEnd() {
+        return this.current === this.binaryBuffer.byteLength;
+    }
+
     /**
      * Считывает символы из файла в строку
      * 
@@ -43,6 +47,16 @@ export class BinaryWrapper {
             result += String.fromCharCode(this.binaryBuffer[this.current]);
             this.current += CHAR_SIZE;
         }
+        return result;
+    }
+
+    readString() {
+        let result = '';
+        while (this.binaryBuffer[this.current] !== 0) {
+            result += String.fromCharCode(this.binaryBuffer[this.current]);
+            this.current += CHAR_SIZE;
+        }
+        this.current += CHAR_SIZE;
         return result;
     }
 
