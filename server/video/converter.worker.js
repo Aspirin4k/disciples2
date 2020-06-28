@@ -3,12 +3,12 @@ const { parentPort } = require('worker_threads');
 // demuxer - bink
 // decoders - bink binkaudio_dct binkaudio_rdft
 // TODO: убрать лишние декодеры из билда?
-const ffmpeg = require('./vendor/ffmpeg-mp4.js')
+const ffmpeg = require('./vendor/ffmpeg-webm.js')
 
 const path = require('path');
 const fs = require('fs');
 
-const TARGET_FORMAT = '.mp4';
+const TARGET_FORMAT = '.webm';
 
 const convertBikToMP4 = (absoluteFileName) => {
     console.log(absoluteFileName);

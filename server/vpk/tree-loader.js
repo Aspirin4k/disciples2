@@ -1,5 +1,5 @@
 import fs from 'fs';
-import {CHAR_SIZE, INT_SIZE, SHORT_SIZE, VPK_SIGNATURE, VPK_TREE_FILE_TERMINATOR, VPK_VERSION} from "./consts";
+import {CHAR_SIZE, INT_SIZE, SHORT_SIZE, VPK_SIGNATURE, VPK_TREE_FILE_TERMINATOR, VPK_VERSION} from "../consts";
 import {loadString} from "./helpers";
 import {logger} from "../logger";
 

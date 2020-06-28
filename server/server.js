@@ -9,6 +9,7 @@ import {getTrees, unpackVpks} from "./vpk/vpk-loader";
 import config from '../gameconfig';
 import webpackConfig from '../webpack.server.config';
 import {convertVideos} from "./video/converter";
+import { unpackFFs } from './ff/ff-loader';
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -31,6 +32,12 @@ app.get('/vpk', (req, res) => {
     unpackVpks();
     res.json('ok');
 });
+
+app.get('/ff', (req, res) => {
+    res.set('content-type', 'application/json');
+    unpackFFs();
+    res.json('ok');
+})
 
 app.get('/video', (req, res) => {
     res.set('content-type', 'application/json');

@@ -1,4 +1,4 @@
-import {CHAR_SIZE} from "./consts";
+import {CHAR_SIZE} from "../consts";
 
 const loadString = (binaryBuffer, indexStart) => {
     let current = indexStart;

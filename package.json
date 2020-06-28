@@ -38,7 +38,7 @@
     "build-dev": "webpack --config webpack.server.config.js && webpack --config webpack.dev.config.js",
     "watch:server": "webpack --watch --info-verbosity verbose --config webpack.server.config.js",
     "watch:web": "webpack --watch --info-verbosity verbose --config webpack.dev.config.js",
-    "nodemon": "nodemon ./dist/server.js",
+    "nodemon": "nodemon --max-old-space-size=2048 ./dist/server.js",
     "start-dev": "npm run build-dev && npm-run-all -p nodemon watch:server watch:web"
   },
   "author": "",

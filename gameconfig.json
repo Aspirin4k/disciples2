@@ -6,7 +6,7 @@
     "threads": 4
   },
   "worker": {
-    "maxOldGenerationSizeMb": 128,
-    "maxYoungGenerationSizeMb": 256
+    "maxOldGenerationSizeMb": 256,
+    "maxYoungGenerationSizeMb": 512
   }
 }
