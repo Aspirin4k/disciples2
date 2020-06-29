@@ -1,10 +1,12 @@
 import fs from 'fs';
 import path from 'path';
 
-import { FF_SIGNATURE, FF_MQRC_SIGNATURE, INT_SIZE } from '../consts';
+import { FF_SIGNATURE } from '../consts';
 import { BinaryWrapper } from '../binary/BinaryWrapper';
 import { logger } from '../logger';
 import { unpackAnimation } from './anim-unpacker';
+import { FF } from './model/ff';
+import { getMQRC } from './parser/mqrc-parser';
 
 // Благодарность Андрею Фролову
 // https://www.extractor.ru/files/6762baed64c88af84c7d9c2fab817808/
@@ -22,14 +24,15 @@ const unpack = (fileName) => {
         return;
     }
 
+    const ff = new FF();
     // Прыжок к MQRC
     binaryWrapper.setCursor(0x1c);
-    const mqrcList = getMQRC(binaryWrapper);
 
-    const mqrc2 = mqrcList.find((mqrc) => {
-        return mqrc.ID === 2;
-    })
-    binaryWrapper.setCursor(mqrc2.Offset);
+    ff.addMQRCList(getMQRC(binaryWrapper));
+
+    const archiveDescription = ff.getMQRCArchiveDescription();
+    binaryWrapper.setCursor(archiveDescription.getOffset());
+
     const filesCount = binaryWrapper.readInt();
     logger.debug('Files Count: ' + filesCount);
     for (let iterator = 0; iterator < filesCount; iterator++) {
@@ -38,53 +41,17 @@ const unpack = (fileName) => {
         logger.debug('File MQRC ID: ' + fileMqrcId);
         logger.debug('File Name: ' + fileName);
 
-        const mqrc = mqrcList.find((mqrc) => {
-            return mqrc.ID === fileMqrcId;
-        })
+        ff.setMQRCName(fileMqrcId, fileName);
+        const mqrc = ff.getMQRC(fileMqrcId);
         fs.writeFileSync(
-            path.join(fileNameFolder, getFileName(mqrc, fileName)), 
-            binaryWrapper.getBuffer().slice(mqrc.Offset, mqrc.Offset + mqrc.Size)
+            path.join(fileNameFolder, fileName), 
+            binaryWrapper.getBuffer().slice(mqrc.getOffset(), mqrc.getOffset() + mqrc.getSize())
         );
     }
 
-    unpackAnimation(fileNameFolder);
+    unpackAnimation(fileNameFolder, ff);
 }
 
-const getMQRC = (binaryWrapper) => {
-    const result = [];
-    while (true) {
-        const MQRC = binaryWrapper.readChar(4);
-        if (FF_MQRC_SIGNATURE !== MQRC) {
-            break;
-        }
 
-        binaryWrapper.shiftCursor(INT_SIZE);
-        const mqrcId = binaryWrapper.readInt();
-        const mqrcSize = binaryWrapper.readInt();
-        binaryWrapper.shiftCursor(3 * INT_SIZE);
-        const mqrcOffset = binaryWrapper.getCursorPosition();
-        logger.debug('MQRC ID: ' + mqrcId);
-        logger.debug('MQRC Size: ' + mqrcSize);
-        logger.debug('MQRC Offset: ' + mqrcOffset);
-
-        // Пропускаем блок MQRC
-        binaryWrapper.shiftCursor(mqrcSize);
-        result.push({
-            ID: mqrcId,
-            Size: mqrcSize,
-            Offset: mqrcOffset
-        })
-    }
-
-    return result;
-}
-
-const getFileName = (mqrc, fileName) => {
-    // Сохраняется с идентификатором блока MQRC для того, чтобы было проще
-    // связать с кадрами анимации, т.к. они ссылаются на идентификатор.
-    return path.extname(fileName) === '.PNG'
-        ? `${mqrc.ID}.PNG`
-        : fileName
-}
 
 export { unpack };

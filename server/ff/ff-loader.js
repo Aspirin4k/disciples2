@@ -1,15 +1,32 @@
+import { isMainThread } from 'worker_threads';
 import path from 'path';
 import glob from 'glob';
 
-const { unpack } = require("./ff-unpacker")
+import { WorkerPool } from '../worker/worker-pool';
 import config from '../../gameconfig.json';
 
-const unpackFFs = () => {
-    const files = glob.sync(path.join(__dirname, config.server_resources, '**/*.ff'));
+const WORKER_LIMIT = 4;
+let WORKER_POOL = null;
 
-    files.forEach((fileName) => {
-        unpack(fileName);
-    });
+const initializeWorkerPool = () => {
+    WORKER_POOL = new WorkerPool(
+        // TODO: Подумать, как сделать более безопасно к изменениям
+        path.join(__dirname, 'unpacker.worker.js'), 
+        WORKER_LIMIT
+    );
+}
+
+const unpackFFs = () => {
+    if (isMainThread) {
+        if (!WORKER_POOL) {
+            initializeWorkerPool();
+        }
+
+        const files = glob.sync(path.join(__dirname, config.server_resources, '**/batitems.ff'));
+        files.forEach((fileName) => {
+           WORKER_POOL.sheduleTask(fileName);
+        });
+    }
 }
 
 export { unpackFFs };

@@ -1,7 +1,7 @@
 export class Frame {
     constructor() {
         this.name = '';
-        this.ID = 0;
+        this.fileID = 0;
         this.animationNumber = 0;
         this.animationFrameNumber = 0;
     }
@@ -10,16 +10,16 @@ export class Frame {
         this.name = name;
     }
 
-    getName(name) {
+    getName() {
         return this.name;
     }
 
-    setID(id) {
-        this.ID = id;
+    setFileID(id) {
+        this.fileID = id;
     }
 
-    getID() {
-        return this.ID;
+    getFileID() {
+        return this.fileID;
     }
 
     setAnimationNumber(animationNumber) {

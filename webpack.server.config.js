@@ -7,7 +7,9 @@ const nodeExternals = require('webpack-node-externals');
 module.exports = {
     mode: 'development',
     entry: {
-        server: './server/server.js'
+        server: './server/server.js',
+        ['unpacker.worker']: './server/ff/unpacker.worker.js',
+        ['converter.worker']: './server/video/converter.worker.js'
     },
     target: 'node',
     node: {
@@ -37,17 +39,6 @@ module.exports = {
     },
     module: {
         rules: [
-            {
-                // Скрипты для воркеров копируются всырую
-                test: /\.worker\.js$/,
-                exclude: /node_modules|vendor/,
-                use: {
-                    loader: "file-loader",
-                    options: {
-                        name: '[name].[ext]'
-                    }
-                }
-            },
             {
                 // Transpiles ES6-8 into ES5
                 test: /\.js$/,

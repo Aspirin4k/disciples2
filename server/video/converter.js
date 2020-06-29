@@ -1,8 +1,7 @@
-import { Worker, isMainThread, parentPort } from 'worker_threads';
+import { isMainThread } from 'worker_threads';
 import glob from 'glob';
 import path from 'path';
 
-import './converter.worker';
 import config from '../../gameconfig';
 import { WorkerPool } from '../worker/worker-pool';
 
