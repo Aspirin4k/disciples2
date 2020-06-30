@@ -6,7 +6,7 @@ import { WorkerPool } from '../worker/worker-pool';
 import config from '../../gameconfig.json';
 import { unpack } from './ff-unpacker';
 
-const WORKER_LIMIT = 4;
+const WORKER_LIMIT = 2;
 let WORKER_POOL = null;
 
 const initializeWorkerPool = () => {
@@ -19,13 +19,14 @@ const initializeWorkerPool = () => {
 
 const unpackFFs = () => {
     if (isMainThread) {
-        if (!WORKER_POOL) {
-            initializeWorkerPool();
-        }
+        // if (!WORKER_POOL) {
+        //     initializeWorkerPool();
+        // }
 
-        const files = glob.sync(path.join(__dirname, config.server_resources, '**/*.ff'));
+        const files = glob.sync(path.join(__dirname, config.server_resources, '**/batunits.ff'));
         files.forEach((fileName) => {
-           WORKER_POOL.sheduleTask(fileName);
+            unpack(fileName);
+        //    WORKER_POOL.sheduleTask(fileName);
         });
     }
 }

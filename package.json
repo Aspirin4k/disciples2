@@ -11,8 +11,8 @@
     "express": "4.17.1",
     "glob": "7.1.6",
     "mkdirp": "1.0.4",
-    "pngjs": "5.0.0",
-    "simple-node-logger": "18.12.24"
+    "simple-node-logger": "18.12.24",
+    "upng-js": "2.1.0"
   },
   "devDependencies": {
     "@babel/core": "7.10.2",
@@ -39,7 +39,7 @@
     "build-dev": "webpack --config webpack.server.config.js && webpack --config webpack.dev.config.js",
     "watch:server": "webpack --watch --info-verbosity verbose --config webpack.server.config.js",
     "watch:web": "webpack --watch --info-verbosity verbose --config webpack.dev.config.js",
-    "nodemon": "nodemon --max-old-space-size=2048 ./dist/server.js",
+    "nodemon": "nodemon --expose-gc --max-old-space-size=2048 ./dist/server.js",
     "start-dev": "npm run build-dev && npm-run-all -p nodemon watch:server watch:web"
   },
   "author": "",

@@ -1,7 +1,6 @@
 import fs from 'fs';
 import path from 'path';
 
-import { PNG } from 'pngjs';
 import { logger } from '../../logger';
 
 const generateStaticImages = (folderName, frames) => {
