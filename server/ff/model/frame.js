@@ -2,8 +2,9 @@ export class Frame {
     constructor() {
         this.name = '';
         this.fileID = 0;
-        this.animationNumber = 0;
-        this.animationFrameNumber = 0;
+        this.MQRC = null;
+        this.animation = null;
+        this.image = null;
     }
 
     setName(name) {
@@ -22,19 +23,27 @@ export class Frame {
         return this.fileID;
     }
 
-    setAnimationNumber(animationNumber) {
-        this.animationNumber = animationNumber;
+    setMQRC(mqrc) {
+        this.MQRC = mqrc;
     }
 
-    getAnimationNumber() {
-        return this.animationNumber;
+    getMQRC() {
+        return this.MQRC;
     }
 
-    setAnimationFrameNumber(frameNumber) {
-        this.animationFrameNumber = frameNumber;
+    setAnimation(animation) {
+        this.animation = animation;
     }
 
-    getAnimationFrameNumber() {
-        return this.animationFrameNumber;
+    getAnimation() {
+        return this.animation;
+    }
+
+    setImage(image) {
+        this.image = image;
+    }
+
+    getImage() {
+        return this.image;
     }
 };

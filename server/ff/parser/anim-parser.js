@@ -6,6 +6,13 @@ import { Animation } from './../model/animation';
 import { BinaryWrapper } from "../../binary/BinaryWrapper";
 import { logger } from '../../logger';
 
+/**
+ * Извлекает информацию об анимациях из файла -ANIMS.OPT. Каждая анимация
+ * состоит из набора кадров, при чем для идентификации кадра используется
+ * его строковое наименование
+ * 
+ * @param {*} folderName 
+ */
 const getAnimations = (folderName) => {
     logger.debug('Staring extracting animations: ' + folderName);
     if (!fs.existsSync(path.join(folderName, FILE_FF_ANIMATIONS))) {
@@ -18,11 +25,13 @@ const getAnimations = (folderName) => {
         const animation = new Animation()
         const animationFrameCount = animationsBuffer.readInt();
         for (let iterator = 0; iterator < animationFrameCount; iterator++) {
-            const animationName = animationsBuffer.readString();
-            animation.addFrameName(animationName);
+            const frameName = animationsBuffer.readString();
+            animation.addFrameName(frameName);
         }
         animations.push(animation);
     }
+
+    logger.debug('Finished extracting animations: ' + folderName);
     return animations;
 }
 

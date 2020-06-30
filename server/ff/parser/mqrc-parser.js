@@ -1,9 +1,14 @@
 import { MQRC } from './../model/mqrc';
 import { FF_MQRC_SIGNATURE, INT_SIZE } from '../../consts';
-import { logger } from '../../logger';
 
 /**
- * Считывает из потока блоки MQRC
+ * Считывает из потока блоки MQRC.
+ * Файл .ff состоит из блоков MQRC. Каждый блок обладает следующим:
+ * * Идентификатором MQRC 
+ * * Размером блока 
+ * * Собственно данными
+ * Особый блок с идентификатором 2 содержит названия файлов, которые содержатся в
+ * данном псевдоархиве.
  * 
  * @param {BinaryWrapper} binaryWrapper 
  */
@@ -23,10 +28,6 @@ const getMQRC = (binaryWrapper) => {
 
         binaryWrapper.shiftCursor(3 * INT_SIZE);
         mqrc.setOffset(binaryWrapper.getCursorPosition());
-
-        logger.debug('MQRC ID: ' + mqrc.getID());
-        logger.debug('MQRC Size: ' + mqrc.getSize());
-        logger.debug('MQRC Offset: ' + mqrc.getOffset());
 
         // Пропускаем блок с данными MQRC (Считаем позднее)
         binaryWrapper.shiftCursor(mqrc.getSize());

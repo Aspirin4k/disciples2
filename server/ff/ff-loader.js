@@ -4,6 +4,7 @@ import glob from 'glob';
 
 import { WorkerPool } from '../worker/worker-pool';
 import config from '../../gameconfig.json';
+import { unpack } from './ff-unpacker';
 
 const WORKER_LIMIT = 4;
 let WORKER_POOL = null;
@@ -22,7 +23,7 @@ const unpackFFs = () => {
             initializeWorkerPool();
         }
 
-        const files = glob.sync(path.join(__dirname, config.server_resources, '**/batitems.ff'));
+        const files = glob.sync(path.join(__dirname, config.server_resources, '**/*.ff'));
         files.forEach((fileName) => {
            WORKER_POOL.sheduleTask(fileName);
         });

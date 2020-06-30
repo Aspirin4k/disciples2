@@ -1,10 +1,10 @@
 import fs from 'fs';
 import path from 'path';
 
-import { FF_SIGNATURE } from '../consts';
+import { FF_SIGNATURE, FILE_FF_INDEX } from '../consts';
 import { BinaryWrapper } from '../binary/BinaryWrapper';
 import { logger } from '../logger';
-import { unpackAnimation } from './anim-unpacker';
+import { unpackImages } from './image-unpacker';
 import { FF } from './model/ff';
 import { getMQRC } from './parser/mqrc-parser';
 
@@ -21,6 +21,7 @@ const unpack = (fileName) => {
     
     const MQDB = binaryWrapper.readChar(4);
     if (FF_SIGNATURE !== MQDB) {
+        logger.debug(fileName + ' is not an MQDB');
         return;
     }
 
@@ -38,8 +39,6 @@ const unpack = (fileName) => {
     for (let iterator = 0; iterator < filesCount; iterator++) {
         const fileName = binaryWrapper.readChar(256).replace(/\u0000/g, '');
         const fileMqrcId = binaryWrapper.readInt();
-        logger.debug('File MQRC ID: ' + fileMqrcId);
-        logger.debug('File Name: ' + fileName);
 
         ff.setMQRCName(fileMqrcId, fileName);
         const mqrc = ff.getMQRC(fileMqrcId);
@@ -49,7 +48,10 @@ const unpack = (fileName) => {
         );
     }
 
-    unpackAnimation(fileNameFolder, ff);
+    // Не во всех архивах содержатся порезанные кадры
+    if (fs.existsSync(path.join(fileNameFolder, FILE_FF_INDEX))) {
+        unpackImages(fileNameFolder, ff);
+    }
 }
 
 
