@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 
 import { logger } from '../../logger';
+import { PNG } from './png';
 
 const generateStaticImages = (folderName, frames) => {
     let atlasCache = {};
@@ -12,31 +13,28 @@ const generateStaticImages = (folderName, frames) => {
         logger.debug('Generating ' + targetFileName);
         
         if (!atlasCache[frame.getFileID()]) {
+            atlasCache = {};
             const atlasData = fs.readFileSync(path.join(folderName, atlasName));
-            atlasCache[frame.getFileID()] = PNG.sync.read(atlasData);
+            atlasCache[frame.getFileID()] = PNG.fromFileBuffer(atlasData);
         }
 
         const atlas = atlasCache[frame.getFileID()];
         const image = frame.getImage();
-        const resultImageOut = new PNG({
-            width: image.getWidth(),
-            height: image.getHeight()
-        })
+        const resultImageOut = new PNG(image.getWidth(), image.getHeight());
         image.getPieces().forEach((piece) => {
-            PNG.bitblt(
+            resultImageOut.bitblt(
                 atlas, 
-                resultImageOut, 
-                piece.getSourceX(), 
-                piece.getSourceY(), 
-                piece.getWidth(), 
-                piece.getHeight(), 
                 piece.getResultX(), 
-                piece.getResultY()
+                piece.getResultY(),
+                piece.getWidth(), 
+                piece.getHeight(),
+                piece.getSourceX(), 
+                piece.getSourceY()
             );
         });
 
         logger.debug('Writing ' + targetFileName);
-        fs.writeFileSync(targetFileName, PNG.sync.write(resultImageOut));
+        fs.writeFileSync(targetFileName, resultImageOut.toFileBuffer());
     });
 }
 

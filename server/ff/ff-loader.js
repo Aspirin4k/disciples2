@@ -4,9 +4,8 @@ import glob from 'glob';
 
 import { WorkerPool } from '../worker/worker-pool';
 import config from '../../gameconfig.json';
-import { unpack } from './ff-unpacker';
 
-const WORKER_LIMIT = 2;
+const WORKER_LIMIT = config.png_converter.threads;
 let WORKER_POOL = null;
 
 const initializeWorkerPool = () => {
@@ -19,14 +18,13 @@ const initializeWorkerPool = () => {
 
 const unpackFFs = () => {
     if (isMainThread) {
-        // if (!WORKER_POOL) {
-        //     initializeWorkerPool();
-        // }
+        if (!WORKER_POOL) {
+            initializeWorkerPool();
+        }
 
-        const files = glob.sync(path.join(__dirname, config.server_resources, '**/batunits.ff'));
+        const files = glob.sync(path.join(__dirname, config.server_resources, '**/*.ff'));
         files.forEach((fileName) => {
-            unpack(fileName);
-        //    WORKER_POOL.sheduleTask(fileName);
+           WORKER_POOL.sheduleTask(fileName);
         });
     }
 }

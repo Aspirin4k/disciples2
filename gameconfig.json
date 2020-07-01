@@ -5,6 +5,9 @@
   "decoder": {
     "threads": 4
   },
+  "png_converter": {
+    "threads": 4
+  },
   "worker": {
     "maxOldGenerationSizeMb": 256,
     "maxYoungGenerationSizeMb": 512

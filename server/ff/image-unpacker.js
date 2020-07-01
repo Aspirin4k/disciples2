@@ -21,7 +21,7 @@ const unpackImages = (folderName, ff) => {
         generateAnimationImages(folderName, animations);
     }
 
-    // generateStaticImages(folderName, frames.filter((frame) => { return !frame.getAnimation(); }));
+    generateStaticImages(folderName, frames.filter((frame) => { return !frame.getAnimation(); }));
 };
 
 // Привязываю MQRC к фреймам
