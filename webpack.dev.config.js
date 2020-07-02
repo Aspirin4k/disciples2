@@ -3,6 +3,8 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
 
+const config = require('./gameconfig.json');
+
 module.exports = {
     mode: 'development',
     entry: {
@@ -53,7 +55,13 @@ module.exports = {
             },
             {
                 test: /\.(png|svg|jpg|gif)$/,
-                use: ['file-loader']
+                use: {
+                    loader: 'file-loader',
+                    options: {
+                        outputPath: path.join(config.server_resources, 'images'),
+                        publicPath: 'resources/images'
+                    }
+                }
             }
         ]
     }

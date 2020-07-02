@@ -4,6 +4,8 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const nodeExternals = require('webpack-node-externals');
 
+const config = require('./gameconfig.json');
+
 module.exports = {
     mode: 'development',
     entry: {
@@ -68,6 +70,6 @@ module.exports = {
                     force: true
                 }
             ]
-        }),
+        })
     ]
 };

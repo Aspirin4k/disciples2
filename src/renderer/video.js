@@ -1,10 +1,12 @@
 export class VideoPlayer {
-    constructor(context, video) {
+    constructor(context, video, width, height) {
         this.context = context;
         this.video = video;
+        this.width = width;
+        this.height = height;
 
         this.video.addEventListener('play', () => {
-
+            this.render();
         });
         this.video.addEventListener('loadeddata', () => {
             this.video.play();
@@ -16,7 +18,7 @@ export class VideoPlayer {
             return;
         }
 
-        this.context.drawImage(this.video, 0, 0, this.video.width, this.video.height);
+        this.context.drawImage(this.video, 0, 0, this.width, this.height);
 
         setTimeout(() => {
             this.render()

@@ -1,6 +1,17 @@
+html {
+    height: 100%;
+}
+
+body {
+    background: center / cover no-repeat url('./../assets/images/background.jpg');
+    height: 100%;
+}
+
 .game-wrapper {
     margin: 0;
     width: 100%;
     display: flex;
     justify-content: center;
+    align-items: center;
+    height: 100%;
 }

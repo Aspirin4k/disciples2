@@ -6,7 +6,11 @@ if(typeof(module.hot) !== 'undefined') {
     module.hot.accept();
 }
 
-const canvas = document.getElementById('game-scene');
-const main = createMainLoop(document, canvas);
+document.onclick = () => {
+    document.onclick = () => false;
 
-main();
+    const canvas = document.getElementById('game-scene');
+    const main = createMainLoop(document, canvas);
+
+    main();
+}
